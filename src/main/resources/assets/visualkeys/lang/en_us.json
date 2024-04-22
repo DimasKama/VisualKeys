@@ -1,0 +1,17 @@
+{
+  "visualkeys": "VisualKeys",
+  "modmenu.summaryTranslation.visualkeys": "VisualKeys",
+  "modmenu.descriptionTranslation.visualkeys": "Show keyboard with keybindings in GUI",
+  "visualkeys.open_keyboard": "Open Keyboard",
+  "visualkeys.keyboard": "Keyboard",
+  "visualkeys.keyboard_settings": "Keyboard Settings",
+  "visualkeys.enabled": "Enabled In HUD: %s",
+  "visualkeys.save_enabled_state": "Save Enabled In HUD State: %s",
+  "visualkeys.keyboard_x": "HUD Keyboard X: %s",
+  "visualkeys.keyboard_y": "HUD Keyboard Y: %s",
+  "visualkeys.keyboard_scale": "HUD Keyboard Scale: %s",
+  "visualkeys.function_keys_visible": "HUD Function Keys Visible: %s",
+  "visualkeys.mid_keys_visible": "HUD Mid Keys Visible: %s",
+  "visualkeys.numpad_keys_visible": "HUD NumPad Keys Visible: %s",
+  "visualkeys.keyboard_textured": "Keys Textured: %s"
+}

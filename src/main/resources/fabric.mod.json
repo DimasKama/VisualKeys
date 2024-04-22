@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "visualkeys",
+  "version": "${version}",
+  "name": "VisualKeys",
+  "description": "Show keyboard with keybindings in GUI",
+  "authors": [
+    "DimasKama"
+  ],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/visualkeys/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "io.github.dimaskama.visualkeys.client.VisualKeys"
+    ],
+    "modmenu": [
+      "io.github.dimaskama.visualkeys.integration.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "visualkeys.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": ">=${minecraft_version}"
+  }
+}

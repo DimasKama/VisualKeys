@@ -1,0 +1,17 @@
+{
+  "visualkeys": "VisualKeys",
+  "modmenu.summaryTranslation.visualkeys": "VisualKeys",
+  "modmenu.descriptionTranslation.visualkeys": "Отображить клавиатуру с биндами в GUI",
+  "visualkeys.open_keyboard": "Открыть Клавиатуру",
+  "visualkeys.keyboard": "Клавиатура",
+  "visualkeys.keyboard_settings": "Настройки Клавиатуры",
+  "visualkeys.enabled": "Включено в HUD: %s",
+  "visualkeys.save_enabled_state": "Сохранять Вкл. Состояние: %s",
+  "visualkeys.keyboard_x": "X Клавиатуры: %s",
+  "visualkeys.keyboard_y": "Y Клавиатуры: %s",
+  "visualkeys.keyboard_scale": "Размер Клавиатуры: %s",
+  "visualkeys.function_keys_visible": "Видимость Функциональных Клавиш в HUD: %s",
+  "visualkeys.mid_keys_visible": "Видимость Средних Клавиш в HUD: %s",
+  "visualkeys.numpad_keys_visible": "Видимость NumPad`а в HUD: %s",
+  "visualkeys.keyboard_textured": "Клавиши Текстурированны: %s"
+}
