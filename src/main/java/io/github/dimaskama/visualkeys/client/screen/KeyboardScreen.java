@@ -34,7 +34,6 @@ public class KeyboardScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackgroundTexture(context);
         super.render(context, mouseX, mouseY, delta);
         Iterable<KeyEntry> keys = VisualKeys.QWERTY.map.values();
         KeyboardRenderer.render(context, keys, RENDER_OPTIONS);

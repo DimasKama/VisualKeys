@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class KeyboardRenderer {
-    private static final Identifier KEYS_TEXTURE = new Identifier(VisualKeys.MOD_ID, "textures/gui/key_buttons.png");
+    private static final Identifier KEYS_TEXTURE = Identifier.of(VisualKeys.MOD_ID, "textures/gui/key_buttons.png");
 
     public static void render(DrawContext context, Iterable<KeyEntry> keys, KeyboardRenderOptions options) {
         int texPadding = 2;
@@ -36,8 +36,7 @@ public class KeyboardRenderer {
         if (VisualKeys.CONFIG.getData().keyboardTextured) {
             RenderSystem.setShaderTexture(0, KEYS_TEXTURE);
             RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-            BufferBuilder builder = Tessellator.getInstance().getBuffer();
-            builder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+            BufferBuilder builder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
                 int code = key.code;
@@ -61,10 +60,10 @@ public class KeyboardRenderer {
                 }) * 0.00390625F;
                 float u2 = u1 + w * 0.00078125F;
                 float v2 = v1 + h * 0.00078125F;
-                builder.vertex(matrix, x1, y1, 0.0F).texture(u1, v1).next();
-                builder.vertex(matrix, x1, y2, 0.0F).texture(u1, v2).next();
-                builder.vertex(matrix, x2, y2, 0.0F).texture(u2, v2).next();
-                builder.vertex(matrix, x2, y1, 0.0F).texture(u2, v1).next();
+                builder.vertex(matrix, x1, y1, 0.0F).texture(u1, v1);
+                builder.vertex(matrix, x1, y2, 0.0F).texture(u1, v2);
+                builder.vertex(matrix, x2, y2, 0.0F).texture(u2, v2);
+                builder.vertex(matrix, x2, y1, 0.0F).texture(u2, v1);
             }
             BufferRenderer.drawWithGlobalProgram(builder.end());
         } else {
@@ -81,10 +80,10 @@ public class KeyboardRenderer {
                 float g = pressed ? 0.5F : 0.2F;
                 float b = 0.7F;
                 float a = pressed ? 0.6F : 1.0F;
-                colorConsumer.vertex(matrix, x1, y1, 0).color(r, g, b, a).next();
-                colorConsumer.vertex(matrix, x1, y2, 0).color(r, g, b, a).next();
-                colorConsumer.vertex(matrix, x2, y2, 0).color(r, g, b, a).next();
-                colorConsumer.vertex(matrix, x2, y1, 0).color(r, g, b, a).next();
+                colorConsumer.vertex(matrix, x1, y1, 0).color(r, g, b, a);
+                colorConsumer.vertex(matrix, x1, y2, 0).color(r, g, b, a);
+                colorConsumer.vertex(matrix, x2, y2, 0).color(r, g, b, a);
+                colorConsumer.vertex(matrix, x2, y1, 0).color(r, g, b, a);
             }
             context.draw();
         }
