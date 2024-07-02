@@ -4,6 +4,7 @@
   "package": "io.github.dimaskama.visualkeys.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "malilib.InputEventHandlerMixin"
   ],
   "client": [
     "InGameHudMixin",

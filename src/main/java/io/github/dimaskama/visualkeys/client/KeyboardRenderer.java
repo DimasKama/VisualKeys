@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.OrderedText;
@@ -115,7 +114,7 @@ public class KeyboardRenderer {
             return;
         }
         for (KeyEntry key : keys) {
-            ArrayList<KeyBinding> binds = key.binds;
+            ArrayList<KeyEntry.Bind> binds = key.binds;
             if (binds.isEmpty()) continue;
             int x = key.getX(options);
             int y = key.getY(options);
@@ -125,11 +124,7 @@ public class KeyboardRenderer {
                     MinecraftClient.getInstance().textRenderer,
                     Objects.requireNonNullElseGet(
                             key.tooltipTexts,
-                            () -> key.tooltipTexts
-                                    = binds.stream().map(bind ->
-                                    (Text) Text.translatable(bind.getCategory())
-                                            .append(": ")
-                                            .append(Text.translatable(bind.getTranslationKey()))).toList()
+                            () -> key.tooltipTexts = binds.stream().map(KeyEntry.Bind::textWithCategory).toList()
                     ),
                     mouseX,
                     mouseY

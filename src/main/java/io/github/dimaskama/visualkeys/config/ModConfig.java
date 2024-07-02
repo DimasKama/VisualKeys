@@ -38,18 +38,17 @@ public class ModConfig extends JsonConfig<ModConfig.Data> {
     }
 
     public static class Data {
-        public Data(boolean enabled, boolean saveEnabledState, boolean keyboardTextured, KeyboardRenderOptions hudRenderOptions) {
-            this.enabled = enabled;
-            this.saveEnabledState = saveEnabledState;
-            this.keyboardTextured = keyboardTextured;
-            this.hudRenderOptions = hudRenderOptions;
-        }
 
         public boolean enabled;
         public boolean saveEnabledState;
         public boolean keyboardTextured;
         public KeyboardRenderOptions hudRenderOptions;
 
-
+        public Data(boolean enabled, boolean saveEnabledState, boolean keyboardTextured, KeyboardRenderOptions hudRenderOptions) {
+            this.enabled = enabled;
+            this.saveEnabledState = saveEnabledState;
+            this.keyboardTextured = keyboardTextured;
+            this.hudRenderOptions = hudRenderOptions;
+        }
     }
 }

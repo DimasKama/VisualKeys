@@ -18,6 +18,17 @@ repositories {
     maven {
         url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
     }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
 }
 
 dependencies {
@@ -31,6 +42,11 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    modImplementation include("maven.modrinth:malilib:${project.malilib_version}")
+
+    // Malilib
+    modImplementation files("lib/malilib-fabric-1.21-0.19.999-sakura.5.jar")
 }
 
 processResources {

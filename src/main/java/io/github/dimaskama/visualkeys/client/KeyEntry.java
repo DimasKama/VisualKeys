@@ -1,6 +1,5 @@
 package io.github.dimaskama.visualkeys.client;
 
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +16,7 @@ public class KeyEntry {
     public final int width;
     public final int height;
 
-    public ArrayList<KeyBinding> binds = new ArrayList<>();
+    public final ArrayList<Bind> binds = new ArrayList<>();
     @Nullable
     public List<Text> tooltipTexts;
     @Nullable
@@ -41,6 +40,8 @@ public class KeyEntry {
     public int getY(KeyboardRenderOptions options) {
         return y + type.getOffsetY(options);
     }
+
+    public record Bind(int code, Text text, Text textWithCategory) { }
 
     public enum Type implements StringIdentifiable {
         MAIN("main"),

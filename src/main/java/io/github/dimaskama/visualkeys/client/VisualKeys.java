@@ -1,17 +1,21 @@
 package io.github.dimaskama.visualkeys.client;
 
+import fi.dy.masa.malilib.event.InputEventHandler;
+import fi.dy.masa.malilib.hotkeys.IHotkey;
 import io.github.dimaskama.visualkeys.config.ModConfig;
 import io.github.dimaskama.visualkeys.mixin.KeyBindingAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.MinecraftClient;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import static io.github.dimaskama.visualkeys.client.KeyEntry.Type.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -35,20 +39,37 @@ public class VisualKeys implements ClientModInitializer {
         }
     }
 
-    public static void onUpdateKeyBindings(Iterable<KeyBinding> binds) {
+    public static void onUpdateKeyBindings() {
+        Stream<KeyEntry.Bind> binds = KeyBindingAccessor.visualkeys_getKeysById().values().stream()
+                .filter(b -> ((KeyBindingAccessor) b).visualkeys_getBoundKey().getCategory() == InputUtil.Type.KEYSYM)
+                .map(b -> {
+                    Text text = Text.translatable(b.getTranslationKey());
+                    return new KeyEntry.Bind(((KeyBindingAccessor) b).visualkeys_getBoundKey().getCode(), text, Text.translatable(b.getCategory()).append(": ").append(text));
+                });
+        if (FabricLoader.getInstance().isModLoaded("malilib")) {
+            binds = Stream.concat(binds, InputEventHandler.getKeybindManager().getKeybindCategories().stream().flatMap(c -> {
+                ArrayList<KeyEntry.Bind> list = new ArrayList<>();
+                for (IHotkey h : c.getHotkeys()) {
+                    if (!h.getKeybind().getKeys().isEmpty()) {
+                        Text text = Text.literal(h.getPrettyName());
+                        list.add(new KeyEntry.Bind(h.getKeybind().getKeys().getLast(), text, Text.literal(c.getModName()).append(": ").append(text)));
+                    }
+                }
+                return list.stream();
+            }));
+        }
         for (KeyEntry entry : QWERTY.map.values()) {
             entry.binds.clear();
             entry.tooltipTexts = null;
             entry.firstBindText = null;
         }
-        for (KeyBinding bind : binds) {
-            InputUtil.Key key = ((KeyBindingAccessor) bind).visualkeys_getBoundKey();
-            if (key.getCategory() != InputUtil.Type.KEYSYM) continue;
-            KeyEntry entry = QWERTY.map.get(key.getCode());
-            if (entry == null) continue;
-            entry.binds.add(0, bind);
-            entry.firstBindText = Text.translatable(bind.getTranslationKey());
-        }
+        binds.forEach(bind -> {
+            KeyEntry entry = QWERTY.map.get(bind.code());
+            if (entry != null) {
+                entry.binds.addFirst(bind);
+                entry.firstBindText = bind.text();
+            }
+        });
     }
 
     public static class QwertyKeyboard {
