@@ -37,15 +37,10 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // DevAuth
-    modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.0"
-
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    modImplementation include("maven.modrinth:malilib:${project.malilib_version}")
-
-    // Malilib
+    // MaliLib
     modImplementation files("lib/malilib-fabric-1.21-0.19.999-sakura.5.jar")
 }
 
