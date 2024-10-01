@@ -2,13 +2,17 @@ package io.github.dimaskama.visualkeys.client;
 
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
+import io.github.dimaskama.visualkeys.client.screen.KeyboardScreen;
 import io.github.dimaskama.visualkeys.config.ModConfig;
 import io.github.dimaskama.visualkeys.mixin.KeyBindingAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
@@ -70,6 +74,12 @@ public class VisualKeys implements ClientModInitializer {
                 entry.firstBindText = bind.text();
             }
         });
+    }
+
+    public static ButtonWidget createOpenKeyboardButton(MinecraftClient client, Screen screen) {
+        return ButtonWidget.builder(Text.translatable("visualkeys.open_keyboard"), button -> {
+            client.setScreen(new KeyboardScreen(screen));
+        }).size(100, 20).build();
     }
 
     public static class QwertyKeyboard {

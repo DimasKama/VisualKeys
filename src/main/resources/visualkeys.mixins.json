@@ -10,7 +10,8 @@
     "InGameHudMixin",
     "KeyBindingAccessor",
     "KeyBindingMixin",
-    "KeybindsScreenMixin"
+    "KeybindsScreenMixin",
+    "controlling.NewKeyBindsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

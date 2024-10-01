@@ -19,6 +19,10 @@ repositories {
         url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
     }
 
+    maven{
+        url "https://jitpack.io"
+    }
+
     exclusiveContent {
         forRepository {
             maven {
@@ -41,7 +45,11 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // MaliLib
-    modImplementation files("lib/malilib-fabric-1.21-0.19.999-sakura.5.jar")
+    modImplementation "com.github.sakura-ryoko:malilib:${project.malilib_version}"
+
+    // Controlling
+    modCompileOnly "maven.modrinth:controlling:${project.controlling_version}"
+
 }
 
 processResources {
