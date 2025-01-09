@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -17,10 +17,6 @@ repositories {
 
     maven {
         url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
-    }
-
-    maven{
-        url "https://jitpack.io"
     }
 
     exclusiveContent {
@@ -45,7 +41,7 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // MaliLib
-    modImplementation "com.github.sakura-ryoko:malilib:${project.malilib_version}"
+    modImplementation "maven.modrinth:malilib:${project.malilib_version}"
 
     // Controlling
     modCompileOnly "maven.modrinth:controlling:${project.controlling_version}"

@@ -3,6 +3,7 @@ package io.github.dimaskama.visualkeys.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.InputUtil;
@@ -34,7 +35,7 @@ public class KeyboardRenderer {
         Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
         if (VisualKeys.CONFIG.getData().keyboardTextured) {
             RenderSystem.setShaderTexture(0, KEYS_TEXTURE);
-            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+            RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
             BufferBuilder builder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
@@ -66,25 +67,26 @@ public class KeyboardRenderer {
             }
             BufferRenderer.drawWithGlobalProgram(builder.end());
         } else {
-            VertexConsumer colorConsumer = context.getVertexConsumers().getBuffer(RenderLayer.getGui());
-            for (KeyEntry key : keys) {
-                if (!key.type.isVisible(options)) continue;
-                int code = key.code;
-                boolean pressed = code >= 0 && InputUtil.isKeyPressed(windowHandle, code);
-                float x1 = (key.getX(options) + padding) * scale;
-                float y1 = (key.getY(options) + padding) * scale;
-                float x2 = x1 + (key.width - (padding << 1)) * scale;
-                float y2 = y1 + (key.height - (padding << 1)) * scale;
-                float r = pressed ? 0.5F : 0.2F;
-                float g = pressed ? 0.5F : 0.2F;
-                float b = 0.7F;
-                float a = pressed ? 0.6F : 1.0F;
-                colorConsumer.vertex(matrix, x1, y1, 0).color(r, g, b, a);
-                colorConsumer.vertex(matrix, x1, y2, 0).color(r, g, b, a);
-                colorConsumer.vertex(matrix, x2, y2, 0).color(r, g, b, a);
-                colorConsumer.vertex(matrix, x2, y1, 0).color(r, g, b, a);
-            }
-            context.draw();
+            context.draw(consumerProvider -> {
+                VertexConsumer colorConsumer = consumerProvider.getBuffer(RenderLayer.getGui());
+                for (KeyEntry key : keys) {
+                    if (!key.type.isVisible(options)) continue;
+                    int code = key.code;
+                    boolean pressed = code >= 0 && InputUtil.isKeyPressed(windowHandle, code);
+                    float x1 = (key.getX(options) + padding) * scale;
+                    float y1 = (key.getY(options) + padding) * scale;
+                    float x2 = x1 + (key.width - (padding << 1)) * scale;
+                    float y2 = y1 + (key.height - (padding << 1)) * scale;
+                    float r = pressed ? 0.5F : 0.2F;
+                    float g = pressed ? 0.5F : 0.2F;
+                    float b = 0.7F;
+                    float a = pressed ? 0.6F : 1.0F;
+                    colorConsumer.vertex(matrix, x1, y1, 0).color(r, g, b, a);
+                    colorConsumer.vertex(matrix, x1, y2, 0).color(r, g, b, a);
+                    colorConsumer.vertex(matrix, x2, y2, 0).color(r, g, b, a);
+                    colorConsumer.vertex(matrix, x2, y1, 0).color(r, g, b, a);
+                }
+            });
         }
 
         // Text
