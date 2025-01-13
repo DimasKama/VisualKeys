@@ -1,6 +1,5 @@
 package io.github.dimaskama.visualkeys.mixin;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import io.github.dimaskama.visualkeys.client.VisualKeys;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
@@ -44,18 +42,6 @@ abstract class ControlsListWidgetCategoryEntryMixin extends ControlsListWidget.E
             return translatable.getKey();
         }
         return "";
-    }
-
-    @ModifyArg(
-            method = "render",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIZ)I"
-            ),
-            index = 5
-    )
-    private boolean makeTextWithShadow(boolean shadow, @Local(argsOnly = true) boolean hovered) {
-        return hovered;
     }
 
     @Inject(method = "render", at = @At("TAIL"))
