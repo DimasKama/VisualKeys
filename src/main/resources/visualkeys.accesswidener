@@ -1,0 +1,4 @@
+accessWidener v2 named
+
+accessible field net/minecraft/client/gui/screen/option/ControlsListWidget$KeyBindingEntry binding Lnet/minecraft/client/option/KeyBinding;
+accessible method net/minecraft/client/gui/screen/option/ControlsListWidget$KeyBindingEntry <init> (Lnet/minecraft/client/gui/screen/option/ControlsListWidget;Lnet/minecraft/client/option/KeyBinding;Lnet/minecraft/text/Text;)V

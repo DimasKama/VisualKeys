@@ -7,6 +7,8 @@
     "malilib.InputEventHandlerMixin"
   ],
   "client": [
+    "ControlsListWidgetCategoryEntryMixin",
+    "ControlsListWidgetMixin",
     "InGameHudMixin",
     "KeyBindingAccessor",
     "KeyBindingMixin",
