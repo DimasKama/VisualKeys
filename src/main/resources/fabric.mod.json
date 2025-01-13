@@ -22,6 +22,7 @@
   "mixins": [
     "visualkeys.mixins.json"
   ],
+  "accessWidener": "visualkeys.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
