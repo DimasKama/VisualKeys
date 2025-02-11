@@ -145,7 +145,7 @@ public class KeyboardRenderer {
             boolean scissor = h > height;
             if (scissor) {
                 context.enableScissor(
-                        (int) (x * tS) + tX, (int) (y * tS) + tY, (int) ((x + width) * tS) + tX, (int) ((y + height) * tS) + tY
+                        (int) (x * tS) + tX, (int) (y * tS) + tY, (int) ((x + width) * tS) + tX + 1, (int) ((y + height) * tS) + tY
                 );
                 int mod = (int) (time % (scrollTime << 2));
                 int maxScroll = h - height;
