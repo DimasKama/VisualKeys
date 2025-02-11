@@ -1,9 +1,7 @@
 package io.github.dimaskama.visualkeys.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.InputUtil;
@@ -34,38 +32,37 @@ public class KeyboardRenderer {
         long windowHandle = MinecraftClient.getInstance().getWindow().getHandle();
         Matrix4f matrix = context.getMatrices().peek().getPositionMatrix();
         if (VisualKeys.CONFIG.getData().keyboardTextured) {
-            RenderSystem.setShaderTexture(0, KEYS_TEXTURE);
-            RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
-            BufferBuilder builder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-            for (KeyEntry key : keys) {
-                if (!key.type.isVisible(options)) continue;
-                int code = key.code;
-                boolean pressed = code >= 0 && InputUtil.isKeyPressed(windowHandle, code);
-                int w = key.width;
-                int h = key.height;
-                float x1 = (key.getX(options) + texPadding) * scale;
-                float y1 = (key.getY(options) + texPadding) * scale;
-                float x2 = x1 + (w - (texPadding << 1)) * scale;
-                float y2 = y1 + (h - (texPadding << 1)) * scale;
-                float u1 = pressed ? w * 0.00078125F : 0.0F;
-                float v1 = (h == 200 ? 160.0F : switch (w) {
-                    default: yield 0.0F;
-                    case 125: yield 20.0F;
-                    case 150: yield 40.0F;
-                    case 175: yield 60.0F;
-                    case 200: yield 80.0F;
-                    case 225: yield 100.0F;
-                    case 275: yield 120.0F;
-                    case 625: yield 140.0F;
-                }) * 0.00390625F;
-                float u2 = u1 + w * 0.00078125F;
-                float v2 = v1 + h * 0.00078125F;
-                builder.vertex(matrix, x1, y1, 0.0F).texture(u1, v1);
-                builder.vertex(matrix, x1, y2, 0.0F).texture(u1, v2);
-                builder.vertex(matrix, x2, y2, 0.0F).texture(u2, v2);
-                builder.vertex(matrix, x2, y1, 0.0F).texture(u2, v1);
-            }
-            BufferRenderer.drawWithGlobalProgram(builder.end());
+            context.draw(consumerProvider -> {
+                VertexConsumer builder = consumerProvider.getBuffer(RenderLayer.getGuiTextured(KEYS_TEXTURE));
+                for (KeyEntry key : keys) {
+                    if (!key.type.isVisible(options)) continue;
+                    int code = key.code;
+                    boolean pressed = code >= 0 && InputUtil.isKeyPressed(windowHandle, code);
+                    int w = key.width;
+                    int h = key.height;
+                    float x1 = (key.getX(options) + texPadding) * scale;
+                    float y1 = (key.getY(options) + texPadding) * scale;
+                    float x2 = x1 + (w - (texPadding << 1)) * scale;
+                    float y2 = y1 + (h - (texPadding << 1)) * scale;
+                    float u1 = pressed ? w * 0.00078125F : 0.0F;
+                    float v1 = (h == 200 ? 160.0F : switch (w) {
+                        default: yield 0.0F;
+                        case 125: yield 20.0F;
+                        case 150: yield 40.0F;
+                        case 175: yield 60.0F;
+                        case 200: yield 80.0F;
+                        case 225: yield 100.0F;
+                        case 275: yield 120.0F;
+                        case 625: yield 140.0F;
+                    }) * 0.00390625F;
+                    float u2 = u1 + w * 0.00078125F;
+                    float v2 = v1 + h * 0.00078125F;
+                    builder.vertex(matrix, x1, y1, 0.0F).texture(u1, v1).color(0xFFFFFFFF);
+                    builder.vertex(matrix, x1, y2, 0.0F).texture(u1, v2).color(0xFFFFFFFF);
+                    builder.vertex(matrix, x2, y2, 0.0F).texture(u2, v2).color(0xFFFFFFFF);
+                    builder.vertex(matrix, x2, y1, 0.0F).texture(u2, v1).color(0xFFFFFFFF);
+                }
+            });
         } else {
             context.draw(consumerProvider -> {
                 VertexConsumer colorConsumer = consumerProvider.getBuffer(RenderLayer.getGui());
@@ -103,7 +100,7 @@ public class KeyboardRenderer {
             if (key.firstBindText == null) continue;
             int sW = (key.width - (padding << 1)) >> 1;
             int sH = (key.height - (padding << 1)) >> 1;
-            renderScrollingText(context, textRenderer, key.firstBindText, sX + 5, sY + 15, sW - 8, sH - 20, time, x, y, textScale);
+            renderScrollingText(context, textRenderer, key.firstBindText, sX + 5, sY + 15, sW - 8, sH - 20, time);
         }
 
         context.getMatrices().pop();
@@ -135,7 +132,7 @@ public class KeyboardRenderer {
         }
     }
 
-    private static void renderScrollingText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int width, int height, long time, int tX, int tY, float tS) {
+    private static void renderScrollingText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int width, int height, long time) {
         int scrollTime = 1000;
 
         int textWidth = textRenderer.getWidth(text);
@@ -145,7 +142,7 @@ public class KeyboardRenderer {
             boolean scissor = h > height;
             if (scissor) {
                 context.enableScissor(
-                        (int) (x * tS) + tX, (int) (y * tS) + tY, (int) ((x + width) * tS) + tX, (int) ((y + height) * tS) + tY
+                        x, y, x + width + 2, y + height + 2
                 );
                 int mod = (int) (time % (scrollTime << 2));
                 int maxScroll = h - height;
