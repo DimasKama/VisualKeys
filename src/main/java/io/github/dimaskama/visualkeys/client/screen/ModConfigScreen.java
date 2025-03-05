@@ -17,7 +17,6 @@ import java.util.function.BooleanSupplier;
 
 public class ModConfigScreen extends Screen {
     private final Screen parent;
-    private boolean dirty;
 
     public ModConfigScreen(Screen parent) {
         super(Text.translatable(VisualKeys.MOD_ID));
@@ -50,9 +49,7 @@ public class ModConfigScreen extends Screen {
 
     @Override
     public void removed() {
-        if (dirty) {
-            VisualKeys.CONFIG.save();
-        }
+        VisualKeys.CONFIG.saveIfDirty();
     }
 
     @Override
@@ -60,7 +57,7 @@ public class ModConfigScreen extends Screen {
         client.setScreen(parent);
     }
 
-    private class Slider extends SliderWidget {
+    private static class Slider extends SliderWidget {
         private final String translationKey;
         private final double max;
         private final FloatConsumer consumer;
@@ -84,11 +81,11 @@ public class ModConfigScreen extends Screen {
         protected void applyValue() {
             exactValue = (float) (value * max);
             consumer.accept(exactValue);
-            dirty = true;
+            VisualKeys.CONFIG.markDirty();
         }
     }
 
-    private class BoolButton extends PressableWidget {
+    private static class BoolButton extends PressableWidget {
         private final String translationKey;
         private final BooleanSupplier supplier;
         private final BooleanConsumer consumer;
@@ -105,7 +102,7 @@ public class ModConfigScreen extends Screen {
         public void onPress() {
             consumer.accept(!supplier.getAsBoolean());
             updateMessage();
-            dirty = true;
+            VisualKeys.CONFIG.markDirty();
         }
 
         private void updateMessage() {

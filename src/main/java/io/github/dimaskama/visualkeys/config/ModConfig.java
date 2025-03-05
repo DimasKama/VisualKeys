@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ModConfig extends JsonConfig<ModConfig.Data> {
+
     public static final Codec<Data> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
                     Codec.BOOL.fieldOf("enabled").forGetter(d -> d.enabled),
@@ -18,6 +19,7 @@ public class ModConfig extends JsonConfig<ModConfig.Data> {
                     Codec.STRING.listOf().optionalFieldOf("collapsed_categories", List.of()).forGetter(Data::getCollapsedCategoriesAsList)
             ).apply(instance, Data::new)
     );
+    private boolean dirty;
 
     public ModConfig(String path) {
         super(path);
@@ -43,6 +45,17 @@ public class ModConfig extends JsonConfig<ModConfig.Data> {
         );
     }
 
+    public void markDirty() {
+        dirty = true;
+    }
+
+    public void saveIfDirty() {
+        if (dirty) {
+            save();
+            dirty = false;
+        }
+    }
+
     public static class Data {
 
         public boolean enabled;
@@ -63,4 +76,5 @@ public class ModConfig extends JsonConfig<ModConfig.Data> {
             return List.copyOf(collapsedCategories);
         }
     }
+
 }

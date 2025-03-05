@@ -13,5 +13,6 @@
   "visualkeys.function_keys_visible": "Видимость Функциональных Клавиш в HUD: %s",
   "visualkeys.mid_keys_visible": "Видимость Средних Клавиш в HUD: %s",
   "visualkeys.numpad_keys_visible": "Видимость NumPad`а в HUD: %s",
-  "visualkeys.keyboard_textured": "Клавиши Текстурированны: %s"
+  "visualkeys.keyboard_textured": "Клавиши Текстурированны: %s",
+  "visualkeys.search_keybinds": "Поиск"
 }
