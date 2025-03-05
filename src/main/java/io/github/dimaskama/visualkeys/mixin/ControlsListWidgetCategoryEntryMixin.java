@@ -2,13 +2,12 @@ package io.github.dimaskama.visualkeys.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.dimaskama.visualkeys.client.VisualKeys;
+import io.github.dimaskama.visualkeys.duck.ControlsListWidgetDuck;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
-import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Arrays;
 import java.util.Set;
 
 @Mixin(ControlsListWidget.CategoryEntry.class)
@@ -55,7 +53,7 @@ abstract class ControlsListWidgetCategoryEntryMixin extends ControlsListWidget.E
             index = 5
     )
     private boolean makeTextWithShadow(boolean shadow, @Local(argsOnly = true) boolean hovered) {
-        return hovered;
+        return shadow || hovered;
     }
 
     @Inject(method = "render", at = @At("TAIL"))
@@ -74,29 +72,14 @@ abstract class ControlsListWidgetCategoryEntryMixin extends ControlsListWidget.E
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         Set<String> cats = VisualKeys.CONFIG.getData().collapsedCategories;
         String cat = visualkeys_getCategory();
-        boolean dirty = false;
         if (cats.add(cat)) {
             visualkeys_isCollapsed = true;
-            dirty = outer.children().removeIf(entry -> entry instanceof ControlsListWidget.KeyBindingEntry keyEntry && keyEntry.binding.getCategory().equals(cat));
         } else {
             visualkeys_isCollapsed = false;
             cats.remove(cat);
-            int i = outer.children().indexOf(this) + 1;
-            KeyBinding[] allKeys = ArrayUtils.clone(MinecraftClient.getInstance().options.allKeys);
-            Arrays.sort(allKeys);
-            for (KeyBinding key : allKeys) {
-                if (key.getCategory().equals(cat)) {
-                    outer.children().add(i++, outer.new KeyBindingEntry(
-                            key,
-                            Text.translatable(key.getTranslationKey())
-                    ));
-                    dirty = true;
-                }
-            }
         }
-        if (dirty) {
-            VisualKeys.CONFIG.save();
-        }
+        ((ControlsListWidgetDuck) outer).visualkeys_refill();
+        VisualKeys.CONFIG.markDirty();
 
         return true;
     }
