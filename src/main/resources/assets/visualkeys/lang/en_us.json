@@ -13,5 +13,6 @@
   "visualkeys.function_keys_visible": "HUD Function Keys Visible: %s",
   "visualkeys.mid_keys_visible": "HUD Mid Keys Visible: %s",
   "visualkeys.numpad_keys_visible": "HUD NumPad Keys Visible: %s",
-  "visualkeys.keyboard_textured": "Keys Textured: %s"
+  "visualkeys.keyboard_textured": "Keys Textured: %s",
+  "visualkeys.search_keybinds": "Search Keybinds"
 }
