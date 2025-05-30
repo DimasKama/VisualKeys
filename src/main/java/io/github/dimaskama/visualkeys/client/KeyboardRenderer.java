@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class KeyboardRenderer {
+
     private static final Identifier KEYS_TEXTURE = Identifier.of(VisualKeys.MOD_ID, "textures/gui/key_buttons.png");
 
     public static void render(DrawContext context, Iterable<KeyEntry> keys, KeyboardRenderOptions options) {
