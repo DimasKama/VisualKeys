@@ -61,18 +61,18 @@ abstract class ControlsListWidgetMixin extends EntryListWidget<ControlsListWidge
                 if (
                         !keyBinding.getBoundKeyLocalizedText().getString().toLowerCase(Locale.ROOT).contains(searchInput)
                         && !I18n.translate(keyBinding.getTranslationKey()).toLowerCase(Locale.ROOT).contains(searchInput)
+                        && !I18n.translate(keyBinding.getCategory()).toLowerCase(Locale.ROOT).contains(searchInput)
                 ) {
                     continue;
                 }
-            } else {
-                String cat = keyBinding.getCategory();
-                if (!cat.equals(lastCat)) {
-                    lastCat = cat;
-                    addEntry(list.new CategoryEntry(Text.translatable(cat)));
-                }
-                if (VisualKeys.CONFIG.getData().collapsedCategories.contains(cat)) {
-                    continue;
-                }
+            }
+            String cat = keyBinding.getCategory();
+            if (!cat.equals(lastCat)) {
+                lastCat = cat;
+                addEntry(list.new CategoryEntry(Text.translatable(cat)));
+            }
+            if (!doSearch && VisualKeys.CONFIG.getData().collapsedCategories.contains(cat)) {
+                continue;
             }
 
             Text text = Text.translatable(keyBinding.getTranslationKey());
