@@ -42,7 +42,7 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // MaliLib
-    modImplementation "maven.modrinth:malilib:${project.malilib_version}"
+    modCompileOnly "maven.modrinth:malilib:${project.malilib_version}"
 
     // Controlling
     modCompileOnly "maven.modrinth:controlling:${project.controlling_version}"

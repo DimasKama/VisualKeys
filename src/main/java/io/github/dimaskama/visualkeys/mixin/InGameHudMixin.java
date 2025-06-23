@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 abstract class InGameHudMixin {
     @Inject(
-            method = "method_55807",
+            method = "renderDebugHud",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/hud/DebugHud;shouldShowDebugHud()Z"
