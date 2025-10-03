@@ -9,7 +9,7 @@
   "client": [
     "ControlsListWidgetCategoryEntryMixin",
     "ControlsListWidgetMixin",
-    "InGameHudMixin",
+    "GameRendererMixin",
     "KeyBindingAccessor",
     "KeyBindingMixin",
     "KeybindsScreenMixin",

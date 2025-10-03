@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'fabric-loom' version '1.11-SNAPSHOT'
     id 'maven-publish'
     id "com.modrinth.minotaur" version "2.+"
 }
@@ -45,7 +45,7 @@ dependencies {
     modCompileOnly "maven.modrinth:malilib:${project.malilib_version}"
 
     // Controlling
-    modCompileOnly "maven.modrinth:controlling:${project.controlling_version}"
+    //modCompileOnly "maven.modrinth:controlling:${project.controlling_version}"
 
 }
 

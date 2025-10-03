@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.gui.widget.SliderWidget;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
@@ -99,7 +100,7 @@ public class ModConfigScreen extends Screen {
         }
 
         @Override
-        public void onPress() {
+        public void onPress(AbstractInput input) {
             consumer.accept(!supplier.getAsBoolean());
             updateMessage();
             VisualKeys.CONFIG.markDirty();

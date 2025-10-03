@@ -5,6 +5,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.Window;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -29,19 +30,19 @@ public class KeyboardRenderer {
         context.getMatrices().translate(x, y);
 
         // Rectangles
-        long windowHandle = MinecraftClient.getInstance().getWindow().getHandle();
+        Window window = MinecraftClient.getInstance().getWindow();
         if (VisualKeys.CONFIG.getData().keyboardTextured) {
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
                 int code = key.code;
-                boolean pressed = code >= 0 && InputUtil.isKeyPressed(windowHandle, code);
+                boolean pressed = code >= 0 && InputUtil.isKeyPressed(window, code);
                 int w = key.width;
                 int h = key.height;
                 float kX1 = (key.getX(options) + texPadding) * scale;
                 float kY1 = (key.getY(options) + texPadding) * scale;
                 float kW = (w - (texPadding << 1)) * scale;
                 float kH = (h - (texPadding << 1)) * scale;
-                float u = pressed ? w : 0.0F;
+                float u = pressed ? w * 0.2F : 0.0F;
                 float v = (h == 200 ? 160.0F : switch (w) {
                     case 125: yield 20.0F;
                     case 150: yield 40.0F;
@@ -71,7 +72,7 @@ public class KeyboardRenderer {
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
                 int code = key.code;
-                boolean pressed = code >= 0 && InputUtil.isKeyPressed(windowHandle, code);
+                boolean pressed = code >= 0 && InputUtil.isKeyPressed(window, code);
                 float kX1 = (key.getX(options) + padding) * scale;
                 float kY1 = (key.getY(options) + padding) * scale;
                 float kX2 = kX1 + (key.width - (padding << 1)) * scale;

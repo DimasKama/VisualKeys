@@ -6,7 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
@@ -50,32 +49,32 @@ abstract class ControlsListWidgetMixin extends EntryListWidget<ControlsListWidge
         clearEntries();
         KeyBinding[] keyBindings = ArrayUtils.clone(client.options.allKeys);
         Arrays.sort(keyBindings);
-        String lastCat = null;
+        KeyBinding.Category lastCat = null;
         String searchInput = visualkeys_searchInput;
         boolean doSearch = searchInput != null && !searchInput.isEmpty();
         if (doSearch) {
             searchInput = searchInput.toLowerCase(Locale.ROOT);
         }
         for (KeyBinding keyBinding : keyBindings) {
+            Text text = Text.translatable(keyBinding.getId());
             if (doSearch) {
                 if (
                         !keyBinding.getBoundKeyLocalizedText().getString().toLowerCase(Locale.ROOT).contains(searchInput)
-                        && !I18n.translate(keyBinding.getTranslationKey()).toLowerCase(Locale.ROOT).contains(searchInput)
-                        && !I18n.translate(keyBinding.getCategory()).toLowerCase(Locale.ROOT).contains(searchInput)
+                        && !text.getString().toLowerCase(Locale.ROOT).contains(searchInput)
+                        && !keyBinding.getCategory().getLabel().getString().toLowerCase(Locale.ROOT).contains(searchInput)
                 ) {
                     continue;
                 }
             }
-            String cat = keyBinding.getCategory();
+            KeyBinding.Category cat = keyBinding.getCategory();
             if (!cat.equals(lastCat)) {
                 lastCat = cat;
-                addEntry(list.new CategoryEntry(Text.translatable(cat)));
+                addEntry(list.new CategoryEntry(cat));
             }
             if (!doSearch && VisualKeys.CONFIG.getData().collapsedCategories.contains(cat)) {
                 continue;
             }
 
-            Text text = Text.translatable(keyBinding.getTranslationKey());
             int i = client.textRenderer.getWidth(text);
             if (i > maxKeyNameLength) {
                 maxKeyNameLength = i;

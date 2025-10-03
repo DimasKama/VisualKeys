@@ -3,10 +3,10 @@ package io.github.dimaskama.visualkeys.mixin;
 import io.github.dimaskama.visualkeys.client.VisualKeys;
 import io.github.dimaskama.visualkeys.duck.ControlsListWidgetDuck;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableTextContent;
+import net.minecraft.client.option.KeyBinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,43 +21,42 @@ import java.util.Set;
 abstract class ControlsListWidgetCategoryEntryMixin extends ControlsListWidget.Entry {
 
     @Shadow(aliases = "field_2738") @Final private ControlsListWidget outer;
-    @Shadow @Final Text text;
 
     @Unique
     private Boolean visualkeys_isCollapsed;
 
     @Unique
+    private String visualkeys_category;
+
+    @Unique
     private boolean visualkeys_isCollapsed() {
         if (visualkeys_isCollapsed == null) {
-            visualkeys_isCollapsed = VisualKeys.CONFIG.getData().collapsedCategories.contains(visualkeys_getCategory());
+            visualkeys_isCollapsed = VisualKeys.CONFIG.getData().collapsedCategories.contains(visualkeys_category);
         }
         return visualkeys_isCollapsed;
     }
 
-    @Unique
-    private String visualkeys_getCategory() {
-        if (text.getContent() instanceof TranslatableTextContent translatable) {
-            return translatable.getKey();
-        }
-        return "";
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void initTail(ControlsListWidget controlsListWidget, KeyBinding.Category category, CallbackInfo ci) {
+        visualkeys_category = VisualKeys.keyCategoryToString(category);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void renderTail(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
+    private void renderTail(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks, CallbackInfo ci) {
         context.drawText(
                 MinecraftClient.getInstance().textRenderer,
                 visualkeys_isCollapsed() ? ">" : "∨",
-                x + 3,
-                y + ((entryHeight - 9) >> 1),
+                getContentX() + 3,
+                getContentY() + ((getContentHeight() - 9) >> 1),
                 0xFFFFFFFF,
                 hovered
         );
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click input, boolean doubled) {
         Set<String> cats = VisualKeys.CONFIG.getData().collapsedCategories;
-        String cat = visualkeys_getCategory();
+        String cat = visualkeys_category;
         if (cats.add(cat)) {
             visualkeys_isCollapsed = true;
         } else {
