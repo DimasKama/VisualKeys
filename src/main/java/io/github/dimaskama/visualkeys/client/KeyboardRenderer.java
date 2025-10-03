@@ -41,7 +41,7 @@ public class KeyboardRenderer {
                 float kY1 = (key.getY(options) + texPadding) * scale;
                 float kW = (w - (texPadding << 1)) * scale;
                 float kH = (h - (texPadding << 1)) * scale;
-                float u = pressed ? w : 0.0F;
+                float u = pressed ? w * 0.2F : 0.0F;
                 float v = (h == 200 ? 160.0F : switch (w) {
                     case 125: yield 20.0F;
                     case 150: yield 40.0F;
