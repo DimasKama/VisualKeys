@@ -22,6 +22,10 @@ import java.util.Locale;
 abstract class ControlsListWidgetMixin extends EntryListWidget<ControlsListWidget.Entry> implements ControlsListWidgetDuck {
 
     @Shadow private int maxKeyNameLength;
+
+    @Shadow
+    public abstract void update();
+
     @Unique
     private String visualkeys_searchInput;
 
@@ -71,7 +75,7 @@ abstract class ControlsListWidgetMixin extends EntryListWidget<ControlsListWidge
                 lastCat = cat;
                 addEntry(list.new CategoryEntry(cat));
             }
-            if (!doSearch && VisualKeys.CONFIG.getData().collapsedCategories.contains(cat)) {
+            if (!doSearch && VisualKeys.CONFIG.getData().collapsedCategories.contains(VisualKeys.keyCategoryToString(cat))) {
                 continue;
             }
 
@@ -82,6 +86,8 @@ abstract class ControlsListWidgetMixin extends EntryListWidget<ControlsListWidge
 
             addEntry(list.new KeyBindingEntry(keyBinding, text));
         }
+
+        update();
     }
 
 }
