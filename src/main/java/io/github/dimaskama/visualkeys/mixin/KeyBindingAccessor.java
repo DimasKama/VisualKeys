@@ -1,18 +1,17 @@
 package io.github.dimaskama.visualkeys.mixin;
 
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.Map;
+import net.minecraft.client.KeyMapping;
 
-@Mixin(KeyBinding.class)
+@Mixin(KeyMapping.class)
 public interface KeyBindingAccessor {
-    @Accessor("boundKey")
-    InputUtil.Key visualkeys_getBoundKey();
-    @Accessor("KEYS_BY_ID")
-    static Map<String, KeyBinding> visualkeys_getKeysById() {
+    @Accessor("key")
+    InputConstants.Key visualkeys_getBoundKey();
+    @Accessor("ALL")
+    static Map<String, KeyMapping> visualkeys_getKeysById() {
         throw new AssertionError();
     }
 }

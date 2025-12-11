@@ -9,14 +9,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,6 +24,8 @@ import java.util.stream.Stream;
 
 import static io.github.dimaskama.visualkeys.client.KeyEntry.Type.*;
 import static org.lwjgl.glfw.GLFW.*;
+
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class VisualKeys implements ClientModInitializer {
     public static final String MOD_ID = "visualkeys";
@@ -39,7 +40,7 @@ public class VisualKeys implements ClientModInitializer {
         QWERTY.init();
     }
 
-    public static void onRender(DrawContext context) {
+    public static void onRender(GuiGraphics context) {
         if (CONFIG.getData().enabled) {
             KeyboardRenderer.render(context, QWERTY.map.values(), CONFIG.getData().hudRenderOptions);
         }
@@ -47,18 +48,18 @@ public class VisualKeys implements ClientModInitializer {
 
     public static void onUpdateKeyBindings() {
         Stream<KeyEntry.Bind> binds = KeyBindingAccessor.visualkeys_getKeysById().values().stream()
-                .filter(b -> ((KeyBindingAccessor) b).visualkeys_getBoundKey().getCategory() == InputUtil.Type.KEYSYM)
+                .filter(b -> ((KeyBindingAccessor) b).visualkeys_getBoundKey().getType() == InputConstants.Type.KEYSYM)
                 .map(b -> {
-                    Text text = Text.translatable(b.getId());
-                    return new KeyEntry.Bind(((KeyBindingAccessor) b).visualkeys_getBoundKey().getCode(), text, Text.empty().append(b.getCategory().getLabel()).append(": ").append(text));
+                    Component text = Component.translatable(b.getName());
+                    return new KeyEntry.Bind(((KeyBindingAccessor) b).visualkeys_getBoundKey().getValue(), text, Component.empty().append(b.getCategory().label()).append(": ").append(text));
                 });
         if (FabricLoader.getInstance().isModLoaded("malilib")) {
             binds = Stream.concat(binds, InputEventHandler.getKeybindManager().getKeybindCategories().stream().flatMap(c -> {
                 ArrayList<KeyEntry.Bind> list = new ArrayList<>();
                 for (IHotkey h : c.getHotkeys()) {
                     if (!h.getKeybind().getKeys().isEmpty()) {
-                        Text text = Text.literal(h.getPrettyName());
-                        list.add(new KeyEntry.Bind(h.getKeybind().getKeys().getLast(), text, Text.literal(c.getModName()).append(": ").append(text)));
+                        Component text = Component.literal(h.getPrettyName());
+                        list.add(new KeyEntry.Bind(h.getKeybind().getKeys().getLast(), text, Component.literal(c.getModName()).append(": ").append(text)));
                     }
                 }
                 return list.stream();
@@ -78,13 +79,13 @@ public class VisualKeys implements ClientModInitializer {
         });
     }
 
-    public static ButtonWidget createOpenKeyboardButton(MinecraftClient client, Screen screen) {
-        return ButtonWidget.builder(Text.translatable("visualkeys.open_keyboard"), button -> {
+    public static Button createOpenKeyboardButton(Minecraft client, Screen screen) {
+        return Button.builder(Component.translatable("visualkeys.open_keyboard"), button -> {
             client.setScreen(new KeyboardScreen(screen));
         }).size(100, 20).build();
     }
 
-    public static String keyCategoryToString(KeyBinding.Category category) {
+    public static String keyCategoryToString(KeyMapping.Category category) {
         Identifier id = category.id();
         return "minecraft".equals(id.getNamespace())
                 ? id.getPath()

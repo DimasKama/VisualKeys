@@ -2,11 +2,6 @@ package io.github.dimaskama.visualkeys.mixin;
 
 import io.github.dimaskama.visualkeys.client.VisualKeys;
 import io.github.dimaskama.visualkeys.duck.ControlsListWidgetDuck;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.option.ControlsListWidget;
-import net.minecraft.client.option.KeyBinding;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,11 +11,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Set;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
+import net.minecraft.client.input.MouseButtonEvent;
 
-@Mixin(ControlsListWidget.CategoryEntry.class)
-abstract class ControlsListWidgetCategoryEntryMixin extends ControlsListWidget.Entry {
+@Mixin(KeyBindsList.CategoryEntry.class)
+abstract class ControlsListWidgetCategoryEntryMixin extends KeyBindsList.Entry {
 
-    @Shadow(aliases = "field_2738") @Final private ControlsListWidget outer;
+    @Shadow(aliases = "field_2738") @Final private KeyBindsList outer;
 
     @Unique
     private Boolean visualkeys_isCollapsed;
@@ -37,14 +37,14 @@ abstract class ControlsListWidgetCategoryEntryMixin extends ControlsListWidget.E
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void initTail(ControlsListWidget controlsListWidget, KeyBinding.Category category, CallbackInfo ci) {
+    private void initTail(KeyBindsList controlsListWidget, KeyMapping.Category category, CallbackInfo ci) {
         visualkeys_category = VisualKeys.keyCategoryToString(category);
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
-    private void renderTail(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks, CallbackInfo ci) {
-        context.drawText(
-                MinecraftClient.getInstance().textRenderer,
+    @Inject(method = "renderContent", at = @At("TAIL"))
+    private void renderTail(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks, CallbackInfo ci) {
+        context.drawString(
+                Minecraft.getInstance().font,
                 visualkeys_isCollapsed() ? ">" : "∨",
                 getContentX() + 3,
                 getContentY() + ((getContentHeight() - 9) >> 1),
@@ -54,7 +54,7 @@ abstract class ControlsListWidgetCategoryEntryMixin extends ControlsListWidget.E
     }
 
     @Override
-    public boolean mouseClicked(Click input, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent input, boolean doubled) {
         Set<String> cats = VisualKeys.CONFIG.getData().collapsedCategories;
         String cat = visualkeys_category;
         if (cats.add(cat)) {

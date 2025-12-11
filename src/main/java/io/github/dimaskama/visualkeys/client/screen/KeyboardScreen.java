@@ -4,11 +4,11 @@ import io.github.dimaskama.visualkeys.client.KeyEntry;
 import io.github.dimaskama.visualkeys.client.KeyboardRenderOptions;
 import io.github.dimaskama.visualkeys.client.KeyboardRenderer;
 import io.github.dimaskama.visualkeys.client.VisualKeys;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public class KeyboardScreen extends Screen {
@@ -21,28 +21,28 @@ public class KeyboardScreen extends Screen {
     private final Screen parent;
 
     public KeyboardScreen(@Nullable Screen parent) {
-        super(Text.translatable("visualkeys.keyboard"));
+        super(Component.translatable("visualkeys.keyboard"));
         this.parent = parent;
     }
 
     @Override
     protected void init() {
-        addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button ->
-                close()).dimensions((width - 150) >> 1, height - 40, 120, 20).build());
+        addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button ->
+                onClose()).bounds((width - 150) >> 1, height - 40, 120, 20).build());
         RENDER_OPTIONS.keyboardScale = (width - 16) / 2250.0F;
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
         Iterable<KeyEntry> keys = VisualKeys.QWERTY.map.values();
         KeyboardRenderer.render(context, keys, RENDER_OPTIONS);
         KeyboardRenderer.renderMouseOverlay(context, keys, RENDER_OPTIONS, mouseX, mouseY);
-        context.drawCenteredTextWithShadow(textRenderer, title, width >>> 1, 8, 0xFFFFFFFF);
+        context.drawCenteredString(font, title, width >>> 1, 8, 0xFFFFFFFF);
     }
 
     @Override
-    public void close() {
-        client.setScreen(parent);
+    public void onClose() {
+        minecraft.setScreen(parent);
     }
 }

@@ -1,41 +1,40 @@
 package io.github.dimaskama.visualkeys.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.Window;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Util;
 
 public class KeyboardRenderer {
 
-    private static final Identifier KEYS_TEXTURE = Identifier.of(VisualKeys.MOD_ID, "textures/gui/key_buttons.png");
+    private static final Identifier KEYS_TEXTURE = Identifier.fromNamespaceAndPath(VisualKeys.MOD_ID, "textures/gui/key_buttons.png");
 
-    public static void render(DrawContext context, Iterable<KeyEntry> keys, KeyboardRenderOptions options) {
+    public static void render(GuiGraphics context, Iterable<KeyEntry> keys, KeyboardRenderOptions options) {
         int texPadding = 2;
         int padding = 5;
         int x = options.keyboardX;
         int y = options.keyboardY;
         float scale = options.keyboardScale;
 
-        context.getMatrices().pushMatrix();
-        context.getMatrices().translate(x, y);
+        context.pose().pushMatrix();
+        context.pose().translate(x, y);
 
         // Rectangles
-        Window window = MinecraftClient.getInstance().getWindow();
+        Window window = Minecraft.getInstance().getWindow();
         if (VisualKeys.CONFIG.getData().keyboardTextured) {
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
                 int code = key.code;
-                boolean pressed = code >= 0 && InputUtil.isKeyPressed(window, code);
+                boolean pressed = code >= 0 && InputConstants.isKeyDown(window, code);
                 int w = key.width;
                 int h = key.height;
                 float kX1 = (key.getX(options) + texPadding) * scale;
@@ -53,7 +52,7 @@ public class KeyboardRenderer {
                     case 625: yield 140.0F;
                     default: yield 0.0F;
                 });
-                context.drawTexture(
+                context.blit(
                         RenderPipelines.GUI_TEXTURED,
                         KEYS_TEXTURE,
                         (int) kX1,
@@ -72,7 +71,7 @@ public class KeyboardRenderer {
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
                 int code = key.code;
-                boolean pressed = code >= 0 && InputUtil.isKeyPressed(window, code);
+                boolean pressed = code >= 0 && InputConstants.isKeyDown(window, code);
                 float kX1 = (key.getX(options) + padding) * scale;
                 float kY1 = (key.getY(options) + padding) * scale;
                 float kX2 = kX1 + (key.width - (padding << 1)) * scale;
@@ -83,25 +82,25 @@ public class KeyboardRenderer {
 
         // Text
         float textScale = scale * 2.0F;
-        context.getMatrices().scale(textScale, textScale);
+        context.pose().scale(textScale, textScale);
 
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        long time = Util.getMeasuringTimeMs();
+        Font textRenderer = Minecraft.getInstance().font;
+        long time = Util.getMillis();
         for (KeyEntry key : keys) {
             if (!key.type.isVisible(options)) continue;
             int sX = (key.getX(options) + padding) >> 1;
             int sY = (key.getY(options) + padding) >> 1;
-            context.drawTextWithShadow(textRenderer, key.name, sX + 5, sY + 4, 0xFFFFFFFF);
+            context.drawString(textRenderer, key.name, sX + 5, sY + 4, 0xFFFFFFFF);
             if (key.firstBindText == null) continue;
             int sW = (key.width - (padding << 1)) >> 1;
             int sH = (key.height - (padding << 1)) >> 1;
             renderScrollingText(context, textRenderer, key.firstBindText, sX + 5, sY + 15, sW - 8, sH - 20, time);
         }
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 
-    public static void renderMouseOverlay(DrawContext context, Iterable<KeyEntry> keys, KeyboardRenderOptions options, int mouseX, int mouseY) {
+    public static void renderMouseOverlay(GuiGraphics context, Iterable<KeyEntry> keys, KeyboardRenderOptions options, int mouseX, int mouseY) {
         int mX = (int) ((mouseX - options.keyboardX) / options.keyboardScale);
         int mY = (int) ((mouseY - options.keyboardY) / options.keyboardScale);
         if (mX < 0 || mY < 0 || mX >= options.getCurrentWidth() || mY >= options.getCurrentHeight()) {
@@ -114,8 +113,8 @@ public class KeyboardRenderer {
             int y = key.getY(options);
             if (mX < x || mY < y || mX >= x + key.width || mY >= y + key.height) continue;
 
-            context.drawTooltip(
-                    MinecraftClient.getInstance().textRenderer,
+            context.setComponentTooltipForNextFrame(
+                    Minecraft.getInstance().font,
                     Objects.requireNonNullElseGet(
                             key.tooltipTexts,
                             () -> key.tooltipTexts = binds.stream().map(KeyEntry.Bind::textWithCategory).toList()
@@ -127,12 +126,12 @@ public class KeyboardRenderer {
         }
     }
 
-    private static void renderScrollingText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int width, int height, long time) {
+    private static void renderScrollingText(GuiGraphics context, Font textRenderer, Component text, int x, int y, int width, int height, long time) {
         int scrollTime = 1000;
 
-        int textWidth = textRenderer.getWidth(text);
+        int textWidth = textRenderer.width(text);
         if (textWidth > width) {
-            List<OrderedText> list = textRenderer.wrapLines(text, width);
+            List<FormattedCharSequence> list = textRenderer.split(text, width);
             int h = list.size() * 10 - 1;
             boolean scissor = h > height;
             if (scissor) {
@@ -152,15 +151,15 @@ public class KeyboardRenderer {
             } else {
                 y += height - h;
             }
-            for (OrderedText t : list) {
-                context.drawTextWithShadow(textRenderer, t, x + (width - textRenderer.getWidth(t)), y, 0xFFFFFFFF);
+            for (FormattedCharSequence t : list) {
+                context.drawString(textRenderer, t, x + (width - textRenderer.width(t)), y, 0xFFFFFFFF);
                 y += 10;
             }
             if (scissor) {
                 context.disableScissor();
             }
         } else {
-            context.drawTextWithShadow(textRenderer, text, x + (width - textWidth), y + height - 9, 0xFFFFFFFF);
+            context.drawString(textRenderer, text, x + (width - textWidth), y + height - 9, 0xFFFFFFFF);
         }
     }
 }

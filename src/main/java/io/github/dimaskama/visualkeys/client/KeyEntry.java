@@ -1,11 +1,11 @@
 package io.github.dimaskama.visualkeys.client;
 
-import net.minecraft.text.Text;
-import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.StringRepresentable;
 
 public class KeyEntry {
     public final int code;
@@ -18,9 +18,9 @@ public class KeyEntry {
 
     public final ArrayList<Bind> binds = new ArrayList<>();
     @Nullable
-    public List<Text> tooltipTexts;
+    public List<Component> tooltipTexts;
     @Nullable
-    public Text firstBindText = null;
+    public Component firstBindText = null;
 
     public KeyEntry(int code, Type type, String name, int x, int y, int width, int height) {
         this.code = code;
@@ -41,15 +41,15 @@ public class KeyEntry {
         return y + type.getOffsetY(options);
     }
 
-    public record Bind(int code, Text text, Text textWithCategory) { }
+    public record Bind(int code, Component text, Component textWithCategory) { }
 
-    public enum Type implements StringIdentifiable {
+    public enum Type implements StringRepresentable {
         MAIN("main"),
         FUNCTION("function"),
         MID("mid"),
         NUMPAD("numpad");
 
-        public static final com.mojang.serialization.Codec<Type> CODEC = StringIdentifiable.createCodec(Type::values);
+        public static final com.mojang.serialization.Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
         private final String key;
 
         Type(String key) {
@@ -57,7 +57,7 @@ public class KeyEntry {
         }
 
         @Override
-        public String asString() {
+        public String getSerializedName() {
             return key;
         }
 
