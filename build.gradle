@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'fabric-loom' version '1.11-SNAPSHOT'
     id 'maven-publish'
     id "com.modrinth.minotaur" version "2.+"
 }
@@ -42,10 +42,10 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // MaliLib
-    modImplementation "maven.modrinth:malilib:${project.malilib_version}"
+    modCompileOnly "maven.modrinth:malilib:${project.malilib_version}"
 
     // Controlling
-    modCompileOnly "maven.modrinth:controlling:${project.controlling_version}"
+    //modCompileOnly "maven.modrinth:controlling:${project.controlling_version}"
 
 }
 
@@ -121,7 +121,7 @@ if (modrinthToken) {
         versionNumber = project.mod_version
         versionType = "release" // This is the default -- can also be `beta` or `alpha`
         uploadFile = remapJar
-        gameVersions = ["1.21", "1.21.1"] // Must be an array, even with only one version
+        gameVersions = ["1.21.9", "1.21.10"] // Must be an array, even with only one version
         dependencies { // A special DSL for creating dependencies
             // scope.type
             // The scope can be `required`, `optional`, `incompatible`, or `embedded`

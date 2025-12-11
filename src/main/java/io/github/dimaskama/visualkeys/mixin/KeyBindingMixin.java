@@ -14,4 +14,5 @@ abstract class KeyBindingMixin {
     private static void updateKeysByCodeTail(CallbackInfo ci) {
         VisualKeys.onUpdateKeyBindings();
     }
+
 }

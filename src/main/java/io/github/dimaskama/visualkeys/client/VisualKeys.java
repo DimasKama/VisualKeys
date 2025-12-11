@@ -13,8 +13,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,8 +49,8 @@ public class VisualKeys implements ClientModInitializer {
         Stream<KeyEntry.Bind> binds = KeyBindingAccessor.visualkeys_getKeysById().values().stream()
                 .filter(b -> ((KeyBindingAccessor) b).visualkeys_getBoundKey().getCategory() == InputUtil.Type.KEYSYM)
                 .map(b -> {
-                    Text text = Text.translatable(b.getTranslationKey());
-                    return new KeyEntry.Bind(((KeyBindingAccessor) b).visualkeys_getBoundKey().getCode(), text, Text.translatable(b.getCategory()).append(": ").append(text));
+                    Text text = Text.translatable(b.getId());
+                    return new KeyEntry.Bind(((KeyBindingAccessor) b).visualkeys_getBoundKey().getCode(), text, Text.empty().append(b.getCategory().getLabel()).append(": ").append(text));
                 });
         if (FabricLoader.getInstance().isModLoaded("malilib")) {
             binds = Stream.concat(binds, InputEventHandler.getKeybindManager().getKeybindCategories().stream().flatMap(c -> {
@@ -80,6 +82,13 @@ public class VisualKeys implements ClientModInitializer {
         return ButtonWidget.builder(Text.translatable("visualkeys.open_keyboard"), button -> {
             client.setScreen(new KeyboardScreen(screen));
         }).size(100, 20).build();
+    }
+
+    public static String keyCategoryToString(KeyBinding.Category category) {
+        Identifier id = category.id();
+        return "minecraft".equals(id.getNamespace())
+                ? id.getPath()
+                : id.toString();
     }
 
     public static class QwertyKeyboard {

@@ -7,8 +7,8 @@ import net.minecraft.util.dynamic.Codecs;
 public class KeyboardRenderOptions {
     public static final Codec<KeyboardRenderOptions> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
-                    Codecs.NONNEGATIVE_INT.fieldOf("keyboard_x").forGetter(o -> o.keyboardX),
-                    Codecs.NONNEGATIVE_INT.fieldOf("keyboard_y").forGetter(o -> o.keyboardY),
+                    Codecs.NON_NEGATIVE_INT.fieldOf("keyboard_x").forGetter(o -> o.keyboardX),
+                    Codecs.NON_NEGATIVE_INT.fieldOf("keyboard_y").forGetter(o -> o.keyboardY),
                     Codec.floatRange(0.0F, 10.0F).fieldOf("keyboard_scale").forGetter(o -> o.keyboardScale),
                     Codec.BOOL.fieldOf("function_visible").forGetter(o -> o.functionVisible),
                     Codec.BOOL.fieldOf("mid_visible").forGetter(o -> o.midVisible),
