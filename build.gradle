@@ -1,7 +1,7 @@
 plugins {
-    id 'fabric-loom' version '1.11-SNAPSHOT'
+    id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
-    id "com.modrinth.minotaur" version "2.+"
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 }
 
 version = project.mod_version
@@ -89,12 +89,6 @@ java {
     withSourcesJar()
 }
 
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
-    }
-}
-
 // configure the maven publication
 publishing {
     publications {
@@ -112,22 +106,29 @@ publishing {
     }
 }
 
-def modrinthToken = System.getenv("MODRINTH_TOKEN")
+publishMods {
+    file = remapJar.archiveFile
+    changelog = file('changelog.md').text
+    type = STABLE
+    modLoaders.add("fabric")
 
-if (modrinthToken) {
     modrinth {
-        token = modrinthToken
-        projectId = "visualkeys"
-        versionNumber = project.mod_version
-        versionType = "release" // This is the default -- can also be `beta` or `alpha`
-        uploadFile = remapJar
-        gameVersions = ["1.21.9", "1.21.10"] // Must be an array, even with only one version
-        dependencies { // A special DSL for creating dependencies
-            // scope.type
-            // The scope can be `required`, `optional`, `incompatible`, or `embedded`
-            // The type can either be `project` or `version`
-            required.project "fabric-api"
-            optional.project "modmenu"
+        projectId = "HEds12HI"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        requires {
+            slug = "fabric-api"
         }
+        optional {
+            slug = "modmenu"
+        }
+    }
+    curseforge {
+        projectId = "1206869"
+        projectSlug = "visualkeys"
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        requires("fabric-api")
+        clientRequired = true
     }
 }
