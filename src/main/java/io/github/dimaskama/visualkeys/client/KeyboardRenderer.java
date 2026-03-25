@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -18,7 +18,7 @@ public class KeyboardRenderer {
 
     private static final Identifier KEYS_TEXTURE = Identifier.fromNamespaceAndPath(VisualKeys.MOD_ID, "textures/gui/key_buttons.png");
 
-    public static void render(GuiGraphics context, Iterable<KeyEntry> keys, KeyboardRenderOptions options) {
+    public static void render(GuiGraphicsExtractor context, Iterable<KeyEntry> keys, KeyboardRenderOptions options) {
         int texPadding = 2;
         int padding = 5;
         int x = options.keyboardX;
@@ -90,7 +90,7 @@ public class KeyboardRenderer {
             if (!key.type.isVisible(options)) continue;
             int sX = (key.getX(options) + padding) >> 1;
             int sY = (key.getY(options) + padding) >> 1;
-            context.drawString(textRenderer, key.name, sX + 5, sY + 4, 0xFFFFFFFF);
+            context.text(textRenderer, key.name, sX + 5, sY + 4, 0xFFFFFFFF);
             if (key.firstBindText == null) continue;
             int sW = (key.width - (padding << 1)) >> 1;
             int sH = (key.height - (padding << 1)) >> 1;
@@ -100,7 +100,7 @@ public class KeyboardRenderer {
         context.pose().popMatrix();
     }
 
-    public static void renderMouseOverlay(GuiGraphics context, Iterable<KeyEntry> keys, KeyboardRenderOptions options, int mouseX, int mouseY) {
+    public static void renderMouseOverlay(GuiGraphicsExtractor context, Iterable<KeyEntry> keys, KeyboardRenderOptions options, int mouseX, int mouseY) {
         int mX = (int) ((mouseX - options.keyboardX) / options.keyboardScale);
         int mY = (int) ((mouseY - options.keyboardY) / options.keyboardScale);
         if (mX < 0 || mY < 0 || mX >= options.getCurrentWidth() || mY >= options.getCurrentHeight()) {
@@ -126,7 +126,7 @@ public class KeyboardRenderer {
         }
     }
 
-    private static void renderScrollingText(GuiGraphics context, Font textRenderer, Component text, int x, int y, int width, int height, long time) {
+    private static void renderScrollingText(GuiGraphicsExtractor context, Font textRenderer, Component text, int x, int y, int width, int height, long time) {
         int scrollTime = 1000;
 
         int textWidth = textRenderer.width(text);
@@ -152,14 +152,14 @@ public class KeyboardRenderer {
                 y += height - h;
             }
             for (FormattedCharSequence t : list) {
-                context.drawString(textRenderer, t, x + (width - textRenderer.width(t)), y, 0xFFFFFFFF);
+                context.text(textRenderer, t, x + (width - textRenderer.width(t)), y, 0xFFFFFFFF);
                 y += 10;
             }
             if (scissor) {
                 context.disableScissor();
             }
         } else {
-            context.drawString(textRenderer, text, x + (width - textWidth), y + height - 9, 0xFFFFFFFF);
+            context.text(textRenderer, text, x + (width - textWidth), y + height - 9, 0xFFFFFFFF);
         }
     }
 }

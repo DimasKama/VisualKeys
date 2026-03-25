@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Set;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsList;
 import net.minecraft.client.input.MouseButtonEvent;
 
 @Mixin(KeyBindsList.CategoryEntry.class)
 abstract class ControlsListWidgetCategoryEntryMixin extends KeyBindsList.Entry {
 
-    @Shadow(aliases = "field_2738") @Final private KeyBindsList outer;
+    @Shadow @Final KeyBindsList this$0;
 
     @Unique
     private Boolean visualkeys_isCollapsed;
@@ -41,9 +41,9 @@ abstract class ControlsListWidgetCategoryEntryMixin extends KeyBindsList.Entry {
         visualkeys_category = VisualKeys.keyCategoryToString(category);
     }
 
-    @Inject(method = "renderContent", at = @At("TAIL"))
-    private void renderTail(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float deltaTicks, CallbackInfo ci) {
-        context.drawString(
+    @Inject(method = "extractContent", at = @At("TAIL"))
+    private void extractContentTail(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks, CallbackInfo ci) {
+        context.text(
                 Minecraft.getInstance().font,
                 visualkeys_isCollapsed() ? ">" : "∨",
                 getContentX() + 3,
@@ -63,7 +63,7 @@ abstract class ControlsListWidgetCategoryEntryMixin extends KeyBindsList.Entry {
             visualkeys_isCollapsed = false;
             cats.remove(cat);
         }
-        ((ControlsListWidgetDuck) outer).visualkeys_refill();
+        ((ControlsListWidgetDuck) this$0).visualkeys_refill();
         VisualKeys.CONFIG.markDirty();
 
         return true;

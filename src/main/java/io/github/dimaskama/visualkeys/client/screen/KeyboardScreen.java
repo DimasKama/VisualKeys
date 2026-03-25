@@ -4,7 +4,7 @@ import io.github.dimaskama.visualkeys.client.KeyEntry;
 import io.github.dimaskama.visualkeys.client.KeyboardRenderOptions;
 import io.github.dimaskama.visualkeys.client.KeyboardRenderer;
 import io.github.dimaskama.visualkeys.client.VisualKeys;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -33,12 +33,12 @@ public class KeyboardScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
         Iterable<KeyEntry> keys = VisualKeys.QWERTY.map.values();
         KeyboardRenderer.render(context, keys, RENDER_OPTIONS);
         KeyboardRenderer.renderMouseOverlay(context, keys, RENDER_OPTIONS, mouseX, mouseY);
-        context.drawCenteredString(font, title, width >>> 1, 8, 0xFFFFFFFF);
+        context.centeredText(font, title, width >>> 1, 8, 0xFFFFFFFF);
     }
 
     @Override

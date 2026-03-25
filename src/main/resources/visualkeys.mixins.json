@@ -9,11 +9,9 @@
   "client": [
     "ControlsListWidgetCategoryEntryMixin",
     "ControlsListWidgetMixin",
-    "GameRendererMixin",
     "KeyBindingAccessor",
     "KeyBindingMixin",
-    "KeybindsScreenMixin",
-    "controlling.NewKeyBindsScreenMixin"
+    "KeybindsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

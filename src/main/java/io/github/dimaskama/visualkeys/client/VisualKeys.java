@@ -8,10 +8,11 @@ import io.github.dimaskama.visualkeys.mixin.KeyBindingAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -38,9 +39,10 @@ public class VisualKeys implements ClientModInitializer {
         CONFIG.loadOrCreate();
         CONFIG.getData().enabled &= CONFIG.getData().saveEnabledState;
         QWERTY.init();
+        HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(MOD_ID, "keyboard"), (graphics, _) -> onRender(graphics));
     }
 
-    public static void onRender(GuiGraphics context) {
+    public static void onRender(GuiGraphicsExtractor context) {
         if (CONFIG.getData().enabled) {
             KeyboardRenderer.render(context, QWERTY.map.values(), CONFIG.getData().hudRenderOptions);
         }

@@ -5,7 +5,7 @@ import io.github.dimaskama.visualkeys.config.ModConfig;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import it.unimi.dsi.fastutil.floats.FloatConsumer;
 import java.util.function.BooleanSupplier;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
@@ -42,9 +42,9 @@ public class ModConfigScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredString(font, title, width >>> 1, 20, 0xFFFFFFFF);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
+        context.centeredText(font, title, width >>> 1, 20, 0xFFFFFFFF);
     }
 
     @Override
@@ -106,9 +106,9 @@ public class ModConfigScreen extends Screen {
         }
 
         @Override
-        protected void renderContents(GuiGraphics guiGraphics, int i, int j, float f) {
-            renderDefaultSprite(guiGraphics);
-            renderDefaultLabel(guiGraphics.textRenderer());
+        protected void extractContents(GuiGraphicsExtractor context, int i, int j, float f) {
+            extractDefaultSprite(context);
+            extractDefaultLabel(context.textRenderer());
         }
 
         private void updateMessage() {
