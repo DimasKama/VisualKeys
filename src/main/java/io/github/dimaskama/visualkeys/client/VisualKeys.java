@@ -83,7 +83,7 @@ public class VisualKeys implements ClientModInitializer {
 
     public static Button createOpenKeyboardButton(Minecraft client, Screen screen) {
         return Button.builder(Component.translatable("visualkeys.open_keyboard"), button -> {
-            client.setScreen(new KeyboardScreen(screen));
+            client.gui.setScreen(new KeyboardScreen(screen));
         }).size(100, 20).build();
     }
 

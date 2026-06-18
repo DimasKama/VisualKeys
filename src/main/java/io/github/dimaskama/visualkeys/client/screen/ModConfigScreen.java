@@ -54,7 +54,7 @@ public class ModConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     private static class Slider extends AbstractSliderButton {
