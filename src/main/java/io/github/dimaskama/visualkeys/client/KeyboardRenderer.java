@@ -1,7 +1,6 @@
 package io.github.dimaskama.visualkeys.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,12 +28,11 @@ public class KeyboardRenderer {
         context.pose().translate(x, y);
 
         // Rectangles
-        Window window = Minecraft.getInstance().getWindow();
         if (VisualKeys.CONFIG.getData().keyboardTextured) {
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
                 int code = key.code;
-                boolean pressed = code >= 0 && InputConstants.isKeyDown(window, code);
+                boolean pressed = code >= 0 && InputConstants.isKeyDown(code);
                 int w = key.width;
                 int h = key.height;
                 float kX1 = (key.getX(options) + texPadding) * scale;
@@ -71,7 +69,7 @@ public class KeyboardRenderer {
             for (KeyEntry key : keys) {
                 if (!key.type.isVisible(options)) continue;
                 int code = key.code;
-                boolean pressed = code >= 0 && InputConstants.isKeyDown(window, code);
+                boolean pressed = code >= 0 && InputConstants.isKeyDown(code);
                 float kX1 = (key.getX(options) + padding) * scale;
                 float kY1 = (key.getY(options) + padding) * scale;
                 float kX2 = kX1 + (key.width - (padding << 1)) * scale;
